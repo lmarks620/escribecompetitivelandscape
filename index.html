@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eScribe — Competitive Intelligence</title>
+  <style>
+    :root {
+      --teal:       #0B5E6B;
+      --teal-mid:   #0D7A8A;
+      --teal-lt:    #38B2C0;
+      --teal-pale:  #E8F7F9;
+      --green:      #059669;
+      --green-lt:   #D1FAE5;
+      --red:        #DC2626;
+      --red-lt:     #FEE2E2;
+      --amber:      #D97706;
+      --amber-lt:   #FEF3C7;
+      --blue-lt:    #EFF6FF;
+      --gray-bg:    #F2F5F6;
+      --gray-100:   #F1F5F9;
+      --gray-200:   #E2E8F0;
+      --gray-500:   #64748B;
+      --gray-700:   #334155;
+      --white:      #FFFFFF;
+      --radius:     10px;
+      --shadow:     0 2px 12px rgba(11,94,107,0.09);
+      --shadow-lg:  0 8px 32px rgba(11,94,107,0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-bg);
+      color: var(--gray-700);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP HEADER ─────────────────────────────────────────────── */
+    .site-header {
+      background: var(--teal);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .site-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .site-header .meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      text-align: right;
+      line-height: 1.4;
+    }
+    .site-header .meta strong {
+      color: rgba(255,255,255,0.85);
+      display: block;
+      font-size: 13px;
+    }
+
+    /* ── NAV BAR ────────────────────────────────────────────────── */
+    .competitor-nav {
+      background: var(--teal-mid);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 40px;
+      position: sticky;
+      top: 72px;
+      z-index: 190;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .competitor-nav::-webkit-scrollbar { display: none; }
+
+    .competitor-nav a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 14px 16px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .competitor-nav a:hover { color: white; }
+    .competitor-nav a.active {
+      color: white;
+      border-bottom-color: var(--teal-lt);
+    }
+
+    /* ── MAIN LAYOUT ────────────────────────────────────────────── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 0 32px 80px; }
+
+    /* ── OVERVIEW SECTION ───────────────────────────────────────── */
+    .overview-hero {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-mid) 60%, #0E9AA7 100%);
+      border-radius: 0 0 var(--radius) var(--radius);
+      color: white;
+      padding: 56px 48px;
+      margin-bottom: 40px;
+    }
+    .overview-hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .overview-hero p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.75);
+      max-width: 620px;
+      margin-bottom: 36px;
+    }
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .overview-stat {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .overview-stat .num {
+      font-size: 28px;
+      font-weight: 800;
+      color: #7FD8E3;
+    }
+    .overview-stat .label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 4px;
+    }
+
+    /* market map */
+    .market-map {
+      background: white;
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+    .market-map h2 {
+      font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--teal);
+    }
+    .market-map .sub { font-size: 13px; color: var(--gray-500); margin-bottom: 24px; }
+    .competitor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .comp-tile {
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .comp-tile:hover {
+      border-color: var(--teal-mid);
+      box-shadow: 0 4px 12px rgba(11,94,107,0.12);
+      transform: translateY(-1px);
+    }
+    .comp-tile .comp-name { font-weight: 700; font-size: 14px; color: var(--teal); margin-bottom: 4px; }
+    .comp-tile .comp-segment { font-size: 11px; color: var(--gray-500); margin-bottom: 8px; }
+
+    /* ── COMPETITOR SECTION ─────────────────────────────────────── */
+    .comp-section {
+      margin-bottom: 60px;
+      scroll-margin-top: 130px;
+    }
+
+    .comp-section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+    .comp-section-header h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--teal);
+      letter-spacing: -0.3px;
+    }
+    .comp-section-header .win-theme-badge {
+      background: var(--green-lt);
+      border: 1px solid #6EE7B7;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      margin-top: 6px;
+    }
+
+    /* ── CARD GRID ──────────────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+    .col-4  { grid-column: span 4; }
+    .col-6  { grid-column: span 6; }
+    .col-8  { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 900px) {
+      .col-4, .col-6, .col-8 { grid-column: span 12; }
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-500);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .card-title .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+    .dot-green  { background: var(--green); }
+    .dot-red    { background: var(--red); }
+    .dot-amber  { background: var(--amber); }
+    .dot-teal   { background: var(--teal); }
+    .dot-teal-lt { background: var(--teal-lt); }
+    .dot-blue   { background: #3B82F6; }
+
+    /* snapshot card */
+    .snapshot-desc {
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .snapshot-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 3px 3px 0;
+    }
+    .pill-teal   { background: var(--teal); color: white; }
+    .pill-teal-lt { background: var(--teal-pale); color: var(--teal); }
+    .pill-gray   { background: var(--gray-200); color: var(--gray-700); }
+    .pill-red    { background: var(--red-lt); color: var(--red); }
+
+    /* score table */
+    .score-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .score-table th {
+      text-align: left;
+      font-size: 11px;
+      color: var(--gray-500);
+      font-weight: 600;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .score-table td { padding: 8px 8px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+    .score-table tr:last-child td { border-bottom: none; }
+    .score-table .feature-name { color: var(--gray-700); font-weight: 500; }
+    .score-es { font-weight: 700; color: var(--green); }
+    .score-comp { font-weight: 600; color: var(--red); }
+
+    /* bullet lists */
+    .intel-list { list-style: none; }
+    .intel-list li {
+      display: flex;
+      gap: 10px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin-bottom: 9px;
+      color: var(--gray-700);
+    }
+    .intel-list li:last-child { margin-bottom: 0; }
+    .intel-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+    .list-green li::before  { background: var(--green); }
+    .list-red li::before    { background: var(--red); }
+    .list-amber li::before  { background: var(--amber); }
+    .list-teal li::before   { background: var(--teal-mid); }
+    .list-blue li::before   { background: #3B82F6; }
+
+    /* quote card */
+    .quote-block {
+      background: var(--teal-pale);
+      border-left: 3px solid var(--teal-mid);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+      font-style: italic;
+      color: var(--teal);
+      line-height: 1.55;
+    }
+    .quote-block:last-child { margin-bottom: 0; }
+    .quote-attr {
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 600;
+      color: var(--teal-mid);
+      margin-top: 6px;
+    }
+
+    /* win/lose callout */
+    .callout {
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+    .callout-green { background: var(--green-lt); border: 1px solid #A7F3D0; color: #065F46; }
+    .callout-red   { background: var(--red-lt);   border: 1px solid #FCA5A5; color: #7F1D1D; }
+    .callout-amber { background: var(--amber-lt); border: 1px solid #FCD34D; color: #78350F; }
+    .callout-teal  { background: var(--teal-pale); border: 1px solid #A3D9E0; color: var(--teal); }
+
+    .callout strong { font-weight: 700; display: block; margin-bottom: 4px; }
+
+    /* switch stories */
+    .switch-card {
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--gray-700);
+      border-left: 3px solid var(--green);
+    }
+    .switch-card .org { font-weight: 700; color: var(--teal); font-size: 13px; }
+
+    /* pricing */
+    .pricing-fact {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    .pricing-fact:last-child { border-bottom: none; padding-bottom: 0; }
+    .pricing-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .pi-amber { background: var(--amber-lt); }
+    .pi-red   { background: var(--red-lt); }
+    .pi-green { background: var(--green-lt); }
+    .pi-teal  { background: var(--teal-pale); }
+
+    /* field intel */
+    .field-item {
+      border-left: 3px solid var(--amber);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      background: var(--amber-lt);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+    .field-item:last-child { margin-bottom: 0; }
+    .field-item .field-date {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--amber);
+      margin-bottom: 5px;
+    }
+
+    /* section divider */
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal-mid);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 48px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* footer */
+    .site-footer {
+      background: var(--teal);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      margin-top: 60px;
+    }
+    .site-footer strong { color: rgba(255,255,255,0.8); }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="logo">
+    <img src="../ES comp intel gpt docs/eScribe logo whote words.png" style="height:32px; object-fit:contain;" alt="eScribe" />
+  </div>
+  <div class="meta">
+    <strong>Board Review | Confidential</strong>
+    Updated April 2026
+  </div>
+</header>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────── -->
+<nav class="competitor-nav" id="comp-nav">
+  <a href="#overview" class="active">Overview</a>
+  <a href="#granicus">Granicus</a>
+  <a href="#icompass">iCompass</a>
+  <a href="#civicplus">CivicPlus</a>
+  <a href="#govinity">Govinity</a>
+  <a href="#paper" style="border-left: 1px solid rgba(255,255,255,0.15); margin-left: 8px; padding-left: 20px;">Paper / Email / PDF</a>
+</nav>
+
+<div class="main">
+
+  <!-- ================================================================ -->
+  <!-- OVERVIEW                                                          -->
+  <!-- ================================================================ -->
+  <section id="overview" class="comp-section">
+    <div class="overview-hero">
+      <h1>eScribe Competitive Landscape</h1>
+      <p>eScribe is the purpose-built meeting management platform for government — designed to simplify agendas, minutes, voting, and public transparency for cities, municipalities, and public sector organizations.</p>
+      <div class="overview-stats">
+        <div class="overview-stat">
+          <div class="num">4.7★</div>
+          <div class="label">Capterra Customer<br>Service Rating</div>
+        </div>
+        <div class="overview-stat">
+          <div class="num">97–98%</div>
+          <div class="label">Customer Retention<br>Rate</div>
+        </div>
+        <div class="overview-stat">
+          <div class="num">#1</div>
+          <div class="label">Support quality cited<br>as top win reason vs. Granicus</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="market-map">
+      <h2>Competitive Market Map</h2>
+      <p class="sub">Five primary competitors tracked — click any to jump to its battlecard</p>
+      <div class="competitor-grid">
+        <a class="comp-tile" href="#granicus">
+          <div class="comp-name">Granicus</div>
+          <div class="comp-segment">Enterprise GovTech<br>Platform (PE-backed)</div>
+        </a>
+        <a class="comp-tile" href="#icompass">
+          <div class="comp-name">iCompass</div>
+          <div class="comp-segment">Legacy Meeting Mgmt<br>(Diligent-owned, sunsetting)</div>
+        </a>
+        <a class="comp-tile" href="#civicplus">
+          <div class="comp-name">CivicPlus</div>
+          <div class="comp-segment">Municipal Websites +<br>Agenda Add-on</div>
+        </a>
+        <a class="comp-tile" href="#govinity">
+          <div class="comp-name">Govinity</div>
+          <div class="comp-segment">Early-Stage Startup<br>(Founded 2025)</div>
+        </a>
+        <a class="comp-tile" href="#paper" style="border: 1.5px solid #A3D9E0;">
+          <div class="comp-name">Paper / Email / PDF</div>
+          <div class="comp-segment">Status Quo / Manual<br>Processes</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot dot-green"></span>eScribe's Consistent Winning Themes</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px;">
+        <div class="callout callout-green"><strong>Support That Actually Shows Up</strong>4.7★ Capterra rating vs. Granicus's 2.7★. Prospects cite eScribe's responsiveness as the #1 reason they switch from competitors.</div>
+        <div class="callout callout-green"><strong>Purpose-Built for Government Meetings</strong>Unlike Granicus's acquisition patchwork or CivicPlus's website-first approach, eScribe is built end-to-end for the government meeting lifecycle.</div>
+        <div class="callout callout-green"><strong>Microsoft O365 & Word Integration</strong>Native integration with tools clerks already use. Competitors force workarounds or proprietary editors that create extra manual work.</div>
+        <div class="callout callout-green"><strong>Reliable on Meeting Day</strong>No encoder failures, no file-deletion bugs, no live-meeting anxiety. Granicus users describe meeting day as stressful — eScribe users don't.</div>
+        <div class="callout callout-green"><strong>Intuitive from Day One</strong>High adoption among staff and council with minimal training. iCompass and Granicus are consistently described as "difficult to train people on."</div>
+        <div class="callout callout-green"><strong>Transparent Public Access</strong>Public portal embedded directly — no separate login or portal required. Supports public transparency mandates without adding staff workload.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================================================================ -->
+  <!-- GRANICUS                                                          -->
+  <!-- ================================================================ -->
+  <div class="section-label">Competitor Battlecards</div>
+
+  <section id="granicus" class="comp-section">
+    <div class="comp-section-header">
+      <div>
+        <h2>Granicus</h2>
+        <p style="color:var(--gray-500); font-size:14px; margin-top:4px;">Enterprise GovTech · PE-backed (Vista Equity) · 14+ acquisitions · Legistar, OneMeeting, Peak Agenda</p>
+      </div>
+      <div class="win-theme-badge">Win Theme: Precision Over Sprawl</div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SNAPSHOT -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal"></span>Snapshot</div>
+        <p class="snapshot-desc">Granicus is the incumbent govtech giant — built through 14+ acquisitions under Vista Equity's PE playbook. They offer a broad suite (agenda management, streaming, FOIA, CRM, websites) but the products were never truly integrated. A former Granicus VP described the portfolio as "vendor sprawl reduction" that is actually "a patchwork of acquisitions." Their generalist sales restructuring — one rep selling everything from websites to clerk management — is creating internal chaos. Prospects and references describe the platform as clunky, support as terrible, and a company that "isn't listening."</p>
+        <div>
+          <span class="snapshot-pill pill-teal">Enterprise / GovTech Suite</span>
+          <span class="snapshot-pill pill-gray">Pricing by quote</span>
+          <span class="snapshot-pill pill-red">Capterra Support: 2.7★</span>
+          <span class="snapshot-pill pill-gray">14+ acquired companies</span>
+          <span class="snapshot-pill pill-gray">IQM2 & NovusAgenda sunset 2025</span>
+        </div>
+      </div>
+
+      <!-- CAPTERRA COMPARISON -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Capterra Comparison</div>
+        <table class="score-table">
+          <thead>
+            <tr><th>Category</th><th>eScribe</th><th>Granicus</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="feature-name">Customer Service</td><td class="score-es">4.7★</td><td class="score-comp">2.7★</td></tr>
+            <tr><td class="feature-name">Support Responsiveness</td><td class="score-es">Strong</td><td class="score-comp">Poor</td></tr>
+            <tr><td class="feature-name">Platform Reliability</td><td class="score-es">Reliable</td><td class="score-comp">Glitchy</td></tr>
+            <tr><td class="feature-name">Microsoft O365 Integration</td><td class="score-es">Native</td><td class="score-comp">Limited</td></tr>
+            <tr><td class="feature-name">Ease of Use</td><td class="score-es">High</td><td class="score-comp">Clunky</td></tr>
+            <tr><td class="feature-name">Product Innovation</td><td class="score-es">Active</td><td class="score-comp">Acquisition-driven</td></tr>
+            <tr><td class="feature-name">Training Ease</td><td class="score-es">Fast adoption</td><td class="score-comp">Complex</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- WHY PROSPECTS LEAVE -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-red"></span>Why Prospects Leave Granicus</div>
+        <ul class="intel-list list-red">
+          <li>Support described as "terrible" — 11 different customer success managers in 5 years at one account</li>
+          <li>Platform feels clunky and unreliable; live meetings stressful because "something always seems to break"</li>
+          <li>Agenda packet creation deleting files randomly</li>
+          <li>Encoder and hardware failures during live meetings</li>
+          <li>Billing errors — one city was double-charged for an encoder for two years</li>
+          <li>Acquired products (IQM2, NovusAgenda) sunset with no migration support</li>
+          <li>Products never truly integrated despite "all-in-one" messaging</li>
+          <li>Zero interest in customer feedback or feature requests</li>
+          <li>Sales restructuring creating internal confusion — generalist reps replacing specialists</li>
+        </ul>
+      </div>
+
+      <!-- WHY ESCRIBE WINS -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-green"></span>Why eScribe Wins</div>
+        <ul class="intel-list list-green">
+          <li>Support quality is the #1 cited reason customers switch — eScribe responds fast, Granicus doesn't</li>
+          <li>Native Microsoft O365 and Word integration clerks already know</li>
+          <li>Reliable, no-anxiety meeting day experience</li>
+          <li>Single purpose-built platform vs. a Frankenstein portfolio</li>
+          <li>Faster staff and council adoption with less training overhead</li>
+          <li>eScribe actively listens to customers and ships improvements</li>
+          <li>Transparent pricing without a la carte hardware and module surprises</li>
+        </ul>
+      </div>
+
+      <!-- VULNERABILITY TO PROBE -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Key Vulnerabilities to Probe</div>
+        <ul class="intel-list list-amber">
+          <li>How many CSMs have they had in the last 3 years?</li>
+          <li>Have they experienced any live-meeting failures or file issues?</li>
+          <li>Which Granicus products are they on — and are any being sunset?</li>
+          <li>Have they heard about IQM2 / NovusAgenda being discontinued?</li>
+          <li>Are they being asked to migrate to a new platform (PrimeGov / Peak)?</li>
+          <li>Do their products talk to each other, or are they separate logins?</li>
+          <li>Have they been charged for "preferred support" or fix services?</li>
+        </ul>
+      </div>
+
+      <!-- PROSPECT QUOTES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal-lt"></span>Field Call Intelligence</div>
+        <div class="quote-block">
+          "We've had 11 different customer success managers in five years."
+          <div class="quote-attr">City of Waukesha prospect</div>
+        </div>
+        <div class="quote-block">
+          "New Hanover County is signing with us any day now. They came over from Granicus looking for two things — better support, primarily."
+          <div class="quote-attr">eScribe rep, Forsyth County NC call</div>
+        </div>
+        <div class="quote-block">
+          "I get a call once a week from someone saying I'm ready to leave Granicus because of their support and because of the buggy platform."
+          <div class="quote-attr">eScribe rep, City of Mableton demo</div>
+        </div>
+        <div class="quote-block">
+          "We're stealing their customers left, right and center. The big reason is support — more than anything."
+          <div class="quote-attr">eScribe rep, District of Kent call</div>
+        </div>
+        <div class="quote-block">
+          "Every single person living by our booth that uses Granicus — their support is terrible. I hear it all the time."
+          <div class="quote-attr">eScribe rep, Town of Chelmsford MA</div>
+        </div>
+      </div>
+
+      <!-- SWITCH STORIES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Verified Granicus → eScribe Switches</div>
+        <div class="switch-card">
+          <div class="org">City of Foster City, CA</div>
+          Left due to encoder and video issues, poor customer support, and lack of O365 integration.
+        </div>
+        <div class="switch-card">
+          <div class="org">City of Salem, OR</div>
+          Switched citing platform reliability issues and unresponsive support.
+        </div>
+        <div class="switch-card">
+          <div class="org">City of Vacaville, CA</div>
+          Moved off Granicus for more reliable, clerk-friendly meeting workflows.
+        </div>
+        <div class="switch-card">
+          <div class="org">City of Albany, OR</div>
+          Left due to lack of Microsoft Word / O365 integration and poor support responsiveness.
+        </div>
+        <div class="switch-card">
+          <div class="org">New Hanover County, NC</div>
+          Signing with eScribe — cited support and platform reliability as the primary drivers.
+        </div>
+        <div class="switch-card">
+          <div class="org">Greensboro, NC</div>
+          Moved to eScribe in 2020 following poor support experience and lack of responsiveness.
+        </div>
+      </div>
+
+      <!-- PRICING INTEL -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-amber"></span>Granicus Pricing — What Prospects Are Paying</div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-amber">💰</div>
+          <div><strong>Troup County, GA quote:</strong> $32,000–$45,000 first year, then $23,800 ongoing</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-amber">💰</div>
+          <div><strong>City of Waukesha:</strong> $40,000–$50,000/year for full suite; $22,000–$25,000 per meeting room including encoder, streaming, and voting</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-amber">💰</div>
+          <div><strong>National City webcasting:</strong> ~$2,300/month ($27,600/year) for webcasting production services only</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-red">⚠️</div>
+          <div><strong>A la carte pricing:</strong> Software per room, hardware per room, board voting module quoted separately at ~$5,000 — surprise add-ons are common</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-red">⚠️</div>
+          <div><strong>Billing errors reported:</strong> One city was double-charged for an encoder for two years before catching it</div>
+        </div>
+      </div>
+
+      <!-- GTM INTEL FROM FORMER EXECUTIVE -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-amber"></span>Strategic Intel — Former Granicus VP of Sales</div>
+        <div class="field-item">
+          <div class="field-date">PE-Driven Acquisition Strategy</div>
+          In 7 years at Granicus, never released a net-new product — bought 14 companies instead. Internal engineering was largely limited to bug fixes. The "integrated platform" was never truly integrated.
+        </div>
+        <div class="field-item">
+          <div class="field-date">Sales Structure Collapse</div>
+          Granicus is collapsing siloed product divisions into a single generalist sales team. A rep who sold websites for five years now must sell clerk management and FOIA. "Just get the meeting, the SE will carry the demo."
+        </div>
+        <div class="field-item">
+          <div class="field-date">Association Board Members = Highest Leverage</div>
+          Converting a clerk who sits on a state association board or IMC regional board into an active eScribe champion is the single highest-leverage move in the market.
+        </div>
+        <div class="field-item">
+          <div class="field-date">Bundles Are Vulnerable</div>
+          Granicus bundles FOIA + agenda management to lock out competitors — but these products were never integrated. GovQA (FOIA) was never connected to agenda management. Expose the seams.
+        </div>
+      </div>
+
+      <!-- TALK TRACK -->
+      <div class="card col-12">
+        <div class="card-title"><span class="dot dot-green"></span>Talk Track</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px;">
+          <div class="callout callout-teal">
+            <strong>"Granicus is powerful at scale — but complex. eScribe is intentionally precise."</strong>
+            Their breadth is their liability. Every product they acquired is a separate system that clerks have to learn and manage. eScribe does one thing exceptionally well: the meeting lifecycle from agenda prep to public publishing.
+          </div>
+          <div class="callout callout-teal">
+            <strong>"Don't wait for Granicus to fix what's broken."</strong>
+            They're not listening. That's not a guess — it's what their own customers tell us on calls. If your team has submitted feedback or tickets that haven't moved in months, that's your answer.
+          </div>
+          <div class="callout callout-teal">
+            <strong>"Their 'all-in-one' is really all-in-pieces."</strong>
+            Ask whether their FOIA product connects to their agenda system. Ask if their streaming is in the same login as their minutes. The integrated platform they sell isn't how it actually works day-to-day.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================================================================ -->
+  <!-- ICOMPASS                                                          -->
+  <!-- ================================================================ -->
+  <section id="icompass" class="comp-section">
+    <div class="comp-section-header">
+      <div>
+        <h2>iCompass</h2>
+        <p style="color:var(--gray-500); font-size:14px; margin-top:4px;">Legacy Meeting Management · Owned by Diligent · Being sunset in favor of Diligent Community</p>
+      </div>
+      <div class="win-theme-badge">Win Theme: Modern vs. Legacy</div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SNAPSHOT -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal"></span>Snapshot</div>
+        <p class="snapshot-desc">iCompass is a legacy agenda and meeting management platform owned by Diligent. It was a strong product when implemented years ago, but development essentially stopped — the interface is largely unchanged from 2008. Diligent is now moving customers toward their "Diligent Community" platform, meaning iCompass is in de facto end-of-life status. Reps report they "don't believe iCompass is being actively sold anymore." The biggest wins against iCompass come from support quality, ease of use, and the platform's uncertain future.</p>
+        <div>
+          <span class="snapshot-pill pill-teal">Diligent-owned</span>
+          <span class="snapshot-pill pill-gray">Strong in Ontario + some US markets</span>
+          <span class="snapshot-pill pill-gray">Field-based reports (not Word)</span>
+        </div>
+      </div>
+
+      <!-- WHERE THEY WIN / LOSE -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-red"></span>Where They Win vs. Where They Lose</div>
+        <div class="callout callout-amber" style="margin-bottom:10px;">
+          <strong>Where iCompass Wins</strong>
+          Long-tenured customers with significant historical content archives and familiarity bias. Some organizations have been on the platform since 2008 and face inertia. Backed by Diligent's brand.
+        </div>
+        <div class="callout callout-red">
+          <strong>Where iCompass Loses</strong>
+          Outdated interface that hasn't kept pace with modern expectations. "Not super user friendly" and "difficult to train people on." Field-based reports instead of Word-based. Product uncertainty — what is the future of this platform? Pricing increases at renewal pushing customers to shop.
+        </div>
+      </div>
+
+      <!-- WHY ESCRIBE WINS -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-green"></span>Why eScribe Wins vs. iCompass</div>
+        <ul class="intel-list list-green">
+          <li>Modern, intuitive interface vs. a 2008-era UI that stopped evolving</li>
+          <li>Support quality is the #1 cited reason customers switch — "number one reason people move over to us"</li>
+          <li>Word-based reports and O365 integration vs. proprietary field-based forms</li>
+          <li>Better template customization and workflow flexibility</li>
+          <li>Public access embedded directly — no separate portal</li>
+          <li>Clear product roadmap vs. sunsetting platform with uncertain future</li>
+          <li>Three recent iCompass switches in a single month for one rep alone</li>
+        </ul>
+      </div>
+
+      <!-- VULNERABILITY TO PROBE -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Key Vulnerabilities to Probe</div>
+        <ul class="intel-list list-amber">
+          <li>Have they heard that iCompass is being sunset by Diligent?</li>
+          <li>What happens to their data and workflows if the product is discontinued?</li>
+          <li>Has their renewal pricing increased significantly?</li>
+          <li>Are staff actually using the platform, or has adoption stalled?</li>
+          <li>Do their reports come out in Word format or proprietary fields?</li>
+          <li>Can the public access agendas directly from their website?</li>
+          <li>Are committees and boards fully on the system, or working around it?</li>
+        </ul>
+      </div>
+
+      <!-- PRICING INTEL -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Pricing Intelligence</div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-amber">💰</div>
+          <div><strong>Gaston County:</strong> Quoted "like an extra 70 grand" to add a department to their existing account</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-red">⚠️</div>
+          <div><strong>Forsyth County:</strong> Warned that renewal pricing "was going to be more than what we originally paid for the first three years" — triggered the switch evaluation</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-red">⚠️</div>
+          <div><strong>Renewal pattern:</strong> Consistent reports of pricing increases at renewal, pushing customers to shop alternatives</div>
+        </div>
+      </div>
+
+      <!-- PROSPECT QUOTES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal-lt"></span>Field Call Intelligence</div>
+        <div class="quote-block">
+          "I liked the concept of it, but I just didn't think it was super user friendly. That bothered me a lot. I used it because I had to, and it did make things easier — but it was like difficult to train people on."
+          <div class="quote-attr">Gaston County, NC prospect</div>
+        </div>
+        <div class="quote-block">
+          "I signed six deals last month — six new clients. Three of those were iCompass switching over to us. The big reason was training and support and ongoing support."
+          <div class="quote-attr">eScribe rep, Travelers Rest demo</div>
+        </div>
+        <div class="quote-block">
+          "The interface has remained the same. It's not keeping up with modern interfaces."
+          <div class="quote-attr">City of Aiken, SC prospect (on iCompass since 2008)</div>
+        </div>
+        <div class="quote-block">
+          "I don't believe that they're actively selling iCompass anymore."
+          <div class="quote-attr">eScribe rep, City of Mableton demo</div>
+        </div>
+      </div>
+
+      <!-- SWITCH STORIES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Verified iCompass → eScribe Switches</div>
+        <div class="switch-card">
+          <div class="org">City of Corner Brook, NL</div>
+          Left iCompass due to lack of adoption, limited collaboration functionality, and platform not meeting modern meeting needs. eScribe won on strong regional references, modern UX, and clear upgrade path (livestreaming, closed captioning).
+        </div>
+        <div class="switch-card">
+          <div class="org">Three unnamed municipalities (one month)</div>
+          One eScribe rep signed three iCompass switches in a single month — all citing training difficulty and support quality as the primary drivers.
+        </div>
+        <div class="switch-card">
+          <div class="org">Forsyth County, NC</div>
+          Evaluating switch after renewal pricing increase and identifying stronger features at competitive pricing with eScribe.
+        </div>
+      </div>
+
+      <!-- TALK TRACK -->
+      <div class="card col-12">
+        <div class="card-title"><span class="dot dot-green"></span>Talk Track</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px;">
+          <div class="callout callout-teal">
+            <strong>"iCompass works the same way it did years ago."</strong>
+            That was great in 2008. But government meeting management has changed — council members expect intuitive digital tools, the public expects transparency, and clerks deserve systems that don't require workarounds. iCompass hasn't kept up.
+          </div>
+          <div class="callout callout-teal">
+            <strong>"What's the future of iCompass?"</strong>
+            Diligent owns the product and is actively moving customers to their Community platform. If that migration is coming, wouldn't you rather choose your next platform on your terms — with a vendor that built it for your use case from the ground up?
+          </div>
+          <div class="callout callout-teal">
+            <strong>"eScribe has so much more tools than iCompass."</strong>
+            That's a direct quote from a clerk who made the switch. Show the demo — once prospects see the workflow side by side, the decision usually becomes obvious.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================================================================ -->
+  <!-- CIVICPLUS                                                         -->
+  <!-- ================================================================ -->
+  <section id="civicplus" class="comp-section">
+    <div class="comp-section-header">
+      <div>
+        <h2>CivicPlus</h2>
+        <p style="color:var(--gray-500); font-size:14px; margin-top:4px;">Municipal Website &amp; Civic Engagement Platform · Meeting Management as an add-on · Owns Municode</p>
+      </div>
+      <div class="win-theme-badge">Win Theme: Built for Meetings, Not Websites</div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SNAPSHOT -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal"></span>Snapshot</div>
+        <p class="snapshot-desc">CivicPlus is a broad municipal software vendor best known for websites, CMS, and code publishing (they own Municode). Agenda and meeting management is one of many products in their portfolio — and it shows. Their approach: "If we power your website, we'll throw in a meeting management module." The result is a product where meeting workflows feel secondary. Clerks describe agenda day as a full-calendar blocker. The product creates beautiful final output, but the process of getting there is painful. eScribe wins when the conversation shifts from "what's bundled" to "what actually works for clerks every day."</p>
+        <div>
+          <span class="snapshot-pill pill-teal">Website-first vendor</span>
+          <span class="snapshot-pill pill-gray">Owns Municode (code publishing)</span>
+          <span class="snapshot-pill pill-gray">Lower price point than eScribe</span>
+          <span class="snapshot-pill pill-gray">CivicClerk product line</span>
+        </div>
+      </div>
+
+      <!-- WHERE THEY WIN / LOSE -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-red"></span>Where They Win vs. Where They Lose</div>
+        <div class="callout callout-amber" style="margin-bottom:10px;">
+          <strong>Where CivicPlus Wins</strong>
+          Price (often ~50% less than eScribe). Existing website relationship creates easy bundled conversations. Municode integration for automatic codification updates is a genuine differentiator for some prospects. Beautiful final agenda output.
+        </div>
+        <div class="callout callout-red">
+          <strong>Where CivicPlus Loses</strong>
+          Cumbersome agenda creation — "every Thursday I clear my calendar because it's just agenda day." Making a document change marks the whole agenda as amended. Items edited like puzzle pieces — pulled in and out separately. Staff don't like it, known issues go unfixed, and meeting management remains clearly secondary to their website business.
+        </div>
+      </div>
+
+      <!-- WHY ESCRIBE WINS -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-green"></span>Why eScribe Wins vs. CivicPlus</div>
+        <ul class="intel-list list-green">
+          <li>Purpose-built meeting workflows vs. a website module bolted on</li>
+          <li>Editing a document doesn't mark the whole agenda as amended</li>
+          <li>Last-minute document updates handled without chaos</li>
+          <li>Word and O365 integration that clerks actually enjoy using</li>
+          <li>Missing features in CivicPlus: surveys, term tracking — eScribe has them</li>
+          <li>Support that responds vs. known issues left unfixed</li>
+          <li>Demos convert easily — one demo reversed a CivicPlus decision for Vallejo Flood and Wastewater District</li>
+        </ul>
+      </div>
+
+      <!-- VULNERABILITY TO PROBE -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Key Vulnerabilities to Probe</div>
+        <ul class="intel-list list-amber">
+          <li>How long does agenda prep take every week? Is a specific day blocked for it?</li>
+          <li>What happens when a document changes after the agenda is published?</li>
+          <li>Do they use the CivicPlus meeting module, or just their website tools?</li>
+          <li>Are staff actually using the system, or still going back to email and Word?</li>
+          <li>Do they use surveys, term tracking, or committee management? (CivicPlus lacks these)</li>
+          <li>Have they tried to get issues fixed — and how long did it take?</li>
+        </ul>
+      </div>
+
+      <!-- PRICING INTEL -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Pricing Intelligence</div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-green">✓</div>
+          <div><strong>Price advantage:</strong> CivicPlus is often ~50% less than eScribe — "generally half of what we are." This is their primary competitive weapon.</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-amber">⚡</div>
+          <div><strong>Counter with TCO:</strong> Steer to total cost of ownership — how many hours per agenda cycle? What does one clerk's Thursday actually cost? The price gap narrows fast.</div>
+        </div>
+        <div class="pricing-fact">
+          <div class="pricing-icon pi-green">✓</div>
+          <div><strong>Pricing described as "pretty comparable"</strong> in some deals — not always 50% cheaper. Use the buyer's actual quote.</div>
+        </div>
+      </div>
+
+      <!-- PROSPECT QUOTES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal-lt"></span>Field Call Intelligence</div>
+        <div class="quote-block">
+          "Creating those items separately and then you're kind of sliding them in as a puzzle. But in order to edit them, you've got to slide them back out again. And it's just a huge nuisance."
+          <div class="quote-attr">Town of Chelmsford, MA — CivicPlus user</div>
+        </div>
+        <div class="quote-block">
+          "Making that change is really long and difficult. And it also makes it show as an amended agenda. And really the agenda wasn't amended, it was just a document update. That's probably one of the biggest reasons why we would look at another product."
+          <div class="quote-attr">Town of Chelmsford, MA — CivicPlus user</div>
+        </div>
+        <div class="quote-block">
+          "Every Thursday, I basically just clear my calendar because it's just the agenda day. It's cumbersome."
+          <div class="quote-attr">Town of Chelmsford, MA staff member</div>
+        </div>
+        <div class="quote-block">
+          "I know a clerk that I'm fairly close with and she — her town uses CivicPlus and she actually doesn't like it."
+          <div class="quote-attr">Central Florida Tourism Oversight District prospect</div>
+        </div>
+        <div class="quote-block">
+          "CivicPlus can do just websites. Oftentimes what they'll do is say, well, if we power your website, we'll kind of throw in a meeting management module."
+          <div class="quote-attr">eScribe rep on CivicPlus positioning</div>
+        </div>
+      </div>
+
+      <!-- SWITCH STORIES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Verified CivicPlus → eScribe Switches</div>
+        <div class="switch-card">
+          <div class="org">Vallejo Flood and Wastewater District</div>
+          Left CivicPlus due to poor Microsoft Word integration and manual, fragmented workflows. One eScribe demo was enough to reverse the decision — clear usability advantage in day-to-day meeting work.
+        </div>
+        <div class="switch-card">
+          <div class="org">Town of Discovery Bay</div>
+          Was on Paper/Email/PDF, evaluated CivicPlus and Granicus — neither met usability needs. eScribe won on intuitive platform, better collaboration, and stronger Word integration.
+        </div>
+        <div class="switch-card">
+          <div class="org">Town of Chelmsford, MA (in evaluation)</div>
+          Active evaluation driven entirely by CivicPlus's cumbersome agenda workflow. The "agenda day" problem and inability to make simple document edits without marking the agenda amended.
+        </div>
+      </div>
+
+      <!-- TALK TRACK -->
+      <div class="card col-12">
+        <div class="card-title"><span class="dot dot-green"></span>Talk Track</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px;">
+          <div class="callout callout-teal">
+            <strong>"CivicPlus builds great websites. eScribe builds great meetings."</strong>
+            There's nothing wrong with a website vendor. But when meeting management is the third thing they sell, it's rarely the thing they invest in fixing. Ask when the last meaningful improvement to their CivicClerk workflow was shipped.
+          </div>
+          <div class="callout callout-teal">
+            <strong>Flip the price conversation to time.</strong>
+            CivicPlus may look cheaper per year — but if the clerk blocks out every Thursday for agenda work, what does that cost? One hour saved per agenda cycle across 50 meetings is real money. Build the ROI in the room.
+          </div>
+          <div class="callout callout-teal">
+            <strong>"Almost signed with CivicPlus — then tested the Word workflow."</strong>
+            We've seen customers get close with CivicPlus and flip after a side-by-side workflow demo. Request a hands-on trial comparing agenda creation and document editing. The difference shows itself.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================================================================ -->
+  <!-- GOVINITY                                                          -->
+  <!-- ================================================================ -->
+  <section id="govinity" class="comp-section">
+    <div class="comp-section-header">
+      <div>
+        <h2>Govinity</h2>
+        <p style="color:var(--gray-500); font-size:14px; margin-top:4px;">Early-Stage Startup · Founded 2025 · "Operating System for Open Governance" · First users: Dec 2025</p>
+      </div>
+      <div class="win-theme-badge">Win Theme: Proven Today vs. Wait and See</div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SNAPSHOT -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-teal"></span>Snapshot</div>
+        <p class="snapshot-desc">Govinity is a 2025 startup positioning itself as an "Operating System for Open Governance." The founding team has strong govtech and clerk-domain expertise, and their modern UI and branding are notable. But as of early 2026, the product is very early-stage — first real users were provisioned in December 2025. No third-party reviews exist on G2 or Capterra, and core features are still in development. Govinity exhibited at ICMA 2025 and is generating interest among innovation-forward agencies. The primary risk for any prospective customer: limited financial runway as a self-funded startup, unproven long-term operating model, and serious questions about data continuity if funding changes.</p>
+        <div>
+          <span class="snapshot-pill pill-teal">Founded 2025</span>
+          <span class="snapshot-pill pill-red">No G2 or Capterra reviews</span>
+          <span class="snapshot-pill pill-gray">Self-funded startup</span>
+          <span class="snapshot-pill pill-gray">First users Dec 2025</span>
+          <span class="snapshot-pill pill-gray">Exhibited ICMA 2025</span>
+        </div>
+      </div>
+
+      <!-- WHERE THEY WIN / LOSE -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-red"></span>Where They Win vs. Where They Lose</div>
+        <div class="callout callout-amber" style="margin-bottom:10px;">
+          <strong>Where Govinity Could Win</strong>
+          Innovation-forward agencies willing to pilot early-stage platforms. Strong team credibility in the govtech and clerk community. Modern UI and ambitious AI roadmap may appeal to technology-first buyers.
+        </div>
+        <div class="callout callout-red">
+          <strong>Where Govinity Loses</strong>
+          Very early-stage product with limited live customers and references. Core features still in development. No third-party reviews. Self-funded startup raises concerns about continuity, support stability, and what happens to data if funding changes. Most government buyers cannot afford to be someone's pilot program.
+        </div>
+      </div>
+
+      <!-- VULNERABILITY TO PROBE -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-amber"></span>Key Vulnerabilities to Probe</div>
+        <ul class="intel-list list-amber">
+          <li>How many live customers does Govinity have today? Can they provide references?</li>
+          <li>What is their funding runway? Are they venture-backed or self-funded?</li>
+          <li>What happens to their data if the company's funding situation changes?</li>
+          <li>Which core features are available today vs. on the roadmap?</li>
+          <li>Can they support a live meeting today — including voting, streaming, and minutes?</li>
+          <li>What is their support model? Who answers the phone when something breaks on meeting day?</li>
+          <li>Are they compliant with public records and open government requirements in this jurisdiction?</li>
+        </ul>
+      </div>
+
+      <!-- WHY ESCRIBE WINS -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Why eScribe Wins vs. Govinity</div>
+        <ul class="intel-list list-green">
+          <li>Proven, mature platform with all core features available today — no waiting for the roadmap</li>
+          <li>97–98% customer retention rate — established track record of delivering value</li>
+          <li>Strong reference base across cities, municipalities, and public agencies</li>
+          <li>Dedicated support team with proven responsiveness vs. an early-stage startup's limited capacity</li>
+          <li>No data continuity risk — eScribe is a stable, established company</li>
+          <li>Government-specific compliance and records management built in</li>
+          <li>eScribe has no mentions in active competitive deals — minimal current threat in market</li>
+        </ul>
+      </div>
+
+      <!-- TALK TRACK -->
+      <div class="card col-12">
+        <div class="card-title"><span class="dot dot-green"></span>Talk Track</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px;">
+          <div class="callout callout-teal">
+            <strong>"Govinity is interesting — but most customers don't want to wait and see."</strong>
+            Government clerks run public meetings that are legally mandated — there's no room for a beta experience. eScribe has been purpose-built for this use case and has the reference base to prove it.
+          </div>
+          <div class="callout callout-teal">
+            <strong>Ask about data continuity and support.</strong>
+            As a self-funded startup, Govinity's ability to support customers long-term is unproven. For public sector organizations, that's not a hypothetical risk — it's a procurement concern. What happens to your public records if their funding model changes?
+          </div>
+          <div class="callout callout-teal">
+            <strong>"We love innovation. We also need to run a meeting next Tuesday."</strong>
+            Govinity's vision is compelling. But innovation-forward doesn't mean buying a platform before the core features exist. eScribe delivers modern workflows today, with an active roadmap including AI capabilities — no pilot risk required.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ================================================================ -->
+  <!-- PAPER / EMAIL / PDF (STATUS QUO)                                 -->
+  <!-- ================================================================ -->
+  <section id="paper" class="comp-section">
+    <div class="comp-section-header">
+      <div>
+        <h2>Paper / Email / PDF</h2>
+        <p style="color:var(--gray-500); font-size:14px; margin-top:4px;">Status Quo · Manual Processes · "We've always done it this way"</p>
+      </div>
+      <div class="win-theme-badge">Win Theme: Control Without Complexity</div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SNAPSHOT -->
+      <div class="card col-8">
+        <div class="card-title"><span class="dot dot-teal"></span>Snapshot</div>
+        <p class="snapshot-desc">The most common "competitor" in the market — especially for smaller municipalities and first-time buyers. Many organizations still run meetings through a combination of paper packets, email chains, Word documents, and PDF publishing. This works until it doesn't: version confusion during last-minute edits, no electronic voting, council members struggling to find the right document, and staff spending disproportionate time on manual assembly. The shift from paper/email/PDF to eScribe is typically prompted by council pressure to modernize, a new clerk looking to streamline, or a meeting that went badly due to document chaos.</p>
+        <p class="snapshot-desc" style="margin-top:10px;">Importantly, first-time buyers who move off manual processes often become eScribe's most enthusiastic references — because the productivity gain is immediate and dramatic.</p>
+      </div>
+
+      <!-- WHY THEY STAY -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-amber"></span>Why Organizations Stay Manual</div>
+        <ul class="intel-list list-amber">
+          <li>Fear of change — "we've always done it this way"</li>
+          <li>Concern about technology adoption among council members</li>
+          <li>Budget constraints or procurement complexity</li>
+          <li>Not sure what the software actually does vs. what they already have</li>
+          <li>Previous bad experience with overly complex tools</li>
+          <li>Underestimating the hidden cost of manual processes</li>
+        </ul>
+      </div>
+
+      <!-- PAIN POINTS TO PROBE -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-red"></span>Pain Points to Surface</div>
+        <ul class="intel-list list-red">
+          <li>"Agenda prep as a jumbled nightmare" — version confusion, email chains, last-minute changes</li>
+          <li>Everything lives in email and Word — nothing stays organized or findable</li>
+          <li>No electronic voting — tallies done manually, recorded by hand</li>
+          <li>Council members can't access agenda packets from their phones</li>
+          <li>Public transparency requires extra staff effort to publish and maintain</li>
+          <li>Council pressure to modernize coming from board members used to better tools</li>
+          <li>Audit and records compliance risk with no centralized system</li>
+        </ul>
+      </div>
+
+      <!-- WHY ESCRIBE WINS -->
+      <div class="card col-4">
+        <div class="card-title"><span class="dot dot-green"></span>Why eScribe Wins vs. Manual</div>
+        <ul class="intel-list list-green">
+          <li>Easy to adopt — designed to feel familiar from day one, minimal change management</li>
+          <li>Centralized agendas, minutes, and voting in one place</li>
+          <li>Electronic voting with instant, accurate results</li>
+          <li>Council members access packets from any device — no more printed stacks</li>
+          <li>Automatic public publishing — transparency without extra staff work</li>
+          <li>Immediate productivity gains for clerks on the very first meeting</li>
+          <li>First-time buyers become eScribe's most enthusiastic references</li>
+        </ul>
+      </div>
+
+      <!-- SWITCH STORIES -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Verified Manual → eScribe Switches</div>
+        <div class="switch-card">
+          <div class="org">Zavala County, TX</div>
+          Came from paper/email/PDF. Had previously evaluated Granicus but found it "clunky and not easy to use." eScribe won on ease of use, electronic voting, and improved engagement.
+        </div>
+        <div class="switch-card">
+          <div class="org">Town of Discovery Bay</div>
+          Moved from manual processes after evaluating CivicPlus and Granicus — neither worked. eScribe won on intuitive experience and better collaboration.
+        </div>
+        <div class="switch-card">
+          <div class="org">City of Yorkton, SK</div>
+          Moved from manual to eScribe — immediate productivity gains for staff and centralized meeting management.
+        </div>
+      </div>
+
+      <!-- TALK TRACK -->
+      <div class="card col-6">
+        <div class="card-title"><span class="dot dot-green"></span>Talk Track</div>
+        <div class="callout callout-teal" style="margin-bottom:12px;">
+          <strong>"Bring structure to meeting prep without overwhelming staff."</strong>
+          Most first-time buyers are just looking for control — not a massive system. eScribe is designed to feel familiar from day one. Agenda prep replaces email chaos, not their entire workflow.
+        </div>
+        <div class="callout callout-teal" style="margin-bottom:12px;">
+          <strong>"Council pressure to modernize is real — but they don't want complicated."</strong>
+          Surface the pressure first. Then position eScribe as the answer that's easy enough for the least tech-comfortable council member to adopt without training.
+        </div>
+        <div class="callout callout-teal">
+          <strong>"What does your current agenda day actually look like?"</strong>
+          Let them describe it. When they explain the email chains, the last-minute Word edits, the version confusion, the hand-tallied votes — that's when the value proposition answers itself.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <strong>eScribe Competitive Intelligence</strong> · Board Confidential · Updated April 2026
+</footer>
+
+<script>
+  // Smooth scroll + active nav
+  const navLinks = document.querySelectorAll('.competitor-nav a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  const sections = document.querySelectorAll('.comp-section');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.competitor-nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
